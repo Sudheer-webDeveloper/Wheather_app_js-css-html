@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="card">
+
+        <div class="search">
+            <input type="text" placeholder="Enter City Name" spellcheck="
+            false">
+            <button><img src="search.png" alt=""></button>
+        </div>
+        <div class="error">
+            <p>
+                Invalid City Name
+            </p>
+        </div>
+
+        <div class="weather">
+
+            <img class="weather-icon" src="rain.png" alt="">
+
+            <h1 class="temp">22°c</h1>
+
+            <h2 class="city">New York</h2>
+
+            <div class="details">
+
+                <div class="col">
+                    <img src="humidity.png" alt="">
+                    <div>
+                        <p class="humidity">50%</p>
+                        <p>Humidity</p>
+
+                    </div>
+                </div>
+
+                <div class="col">
+                    <img src="wind.png" alt="">
+                    <div>
+                        <p class="wind">15 km/hr</p>
+                        <p>Wind</p>
+
+                    </div>
+                </div>
+                <!-- 1) This weather details should be update when ever we enter any city for that we are using api,, for that open weather map .org
+                2) secondary then go go sign up an account and save the api key then find the weather based on city area 
+                3)we have to use metric to convert temperature in deg. -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        // when we enter any city name in input box we want that city's particular  temperature ,humidity , speed.// for that we have to do by adding city in the function and inside the fetch , by doing like that it will pass the value to the city value to the 
+
+        // this city name will come from the input field
+
+        const apiKey = "2743c32f081ed489342b5de2aec584aa";
+        const apiUrl = "https://api.openweathermap.org/data/2.5/weather?units=metric&q=";
+
+        //https://api.openweathermap.org/data/2.5/weather?q=germany&appid=2743c32f081ed489342b5de2aec584aa&units=metric
+
+        const searchBox = document.querySelector(".search input");
+        // inside a search we have input and button by giving like this .search input it will select input inside the search
+
+        const searchBtn = document.querySelector(".search button");
+        //we people click on search button it should send this city information to checkWeather() function.
+
+        const weatherIcon = document.querySelector(".weather-icon")
+        async function checkWeather(city) {
+            const response = await fetch(apiUrl + city + `&appid=${apiKey}`);  // by using this this will fetch data from the api
+
+            if (response.status == "404") {
+                document.querySelector(".error").style.display = "block";
+                document.querySelector(".weather").style.display = "none";
+
+            } else {
+                let data = await response.json();
+
+                // console.log(data);
+
+
+                document.querySelector(".city").innerHTML = data.name;
+                // it will target the class name city and update the value in its inner html // it will update the name of the city by using api
+
+
+
+                // document.querySelector(".temp").innerHTML = data.main.temp + "°c"; here it is giving decimal value for temp --Ex: 24.3, 22.7, 20.6 see below to get a integer like 23, 24, 26 for that we have to use Math.round
+
+                document.querySelector(".temp").innerHTML = Math.round(data.main.temp) + "°c";
+
+                // this will target the .temp class and print the value in its inner html // inside a main we have temperature that's why we have given like this (main.temp)
+
+                document.querySelector(".humidity").innerHTML = data.main.humidity + "%";
+                // this will target the .humidity class and print the value in its inner html // inside a main we have humidity that why we given like this ("main.humidity")
+
+                document.querySelector(".wind").innerHTML = data.wind.speed + "km/h";
+                // this will target the .wind class and update the value in its inner html // wind is there directly so there is no need to give mapping for this// inside a wind there is speed so we need that one so we have like this("wind.speed")
+
+                if (data.weather[0].main == "Clouds") {
+                    weatherIcon.src = "clouds.png"
+
+                }
+                else if (data.weather[0].main == "Clear") {
+                    weatherIcon.src = "clear.png"
+                }
+                else if (data.weather[0].main == "Rain") {
+                    weatherIcon.src = "rain.png"
+                }
+                else if (data.weather[0].main == "Drizzle") {
+                    weatherIcon.src = "drizzle.png"
+                }
+                else if (data.weather[0].main == "Mist") {
+                    weatherIcon.src = "mist.png"
+                }
+                document.querySelector(".weather").style.display = "block";
+                document.querySelector(".error").style.display = "none";
+                console.log(data)
+            
+            }
+
+
+
+
+
+        }
+
+        searchBtn.addEventListener("click", () => {
+            checkWeather(searchBox.value);
+
+        })
+
+        // when every webpage will be loaded this function calls
+
+            //This searchBox.value will give the city name written in the input field and it will pass the cityname in this checkWeather it will add in this api
+    </script>
+</body>
+
+</html>
